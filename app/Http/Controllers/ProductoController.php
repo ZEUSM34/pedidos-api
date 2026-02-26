@@ -12,7 +12,12 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        //
+        return Producto::all();
+
+        return reponse()->json([
+        'massage' => 'Lista de productos',
+        'data' => $producto
+        ]);
     }
 
     /**
@@ -27,16 +32,28 @@ class ProductoController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        //
-    }
+{
+    $validated = $request->validate([
+        'nombre' => 'required|string|max:255',
+        'descripcion' => 'nullable|string',
+        'precio' => 'required|numeric',
+        'stock' => 'required|integer'
+    ]);
+
+    $producto = Producto::create($validated);
+
+    return response()->json([
+        'massege' => 'Producto creado correctamente',
+        'data' => $producto
+    ], 201);
+}
 
     /**
      * Display the specified resource.
      */
     public function show(Producto $producto)
     {
-        //
+         return $producto;
     }
 
     /**
@@ -52,7 +69,11 @@ class ProductoController extends Controller
      */
     public function update(Request $request, Producto $producto)
     {
-        //
+        $request->validate([
+    'nombre' => 'required|string|max:255',
+    'precio' => 'required|numeric|min:0',
+    'stock' => 'required|integer|min:0'
+    ]);
     }
 
     /**
@@ -60,6 +81,7 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto)
     {
-        //
+        $producto->delete();
+        return response()->json(['message' => 'Producto eliminado']);
     }
 }
